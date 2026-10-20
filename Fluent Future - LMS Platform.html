@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="uz" class="h-full bg-slate-900 text-slate-100 font-sans selection:bg-blue-500 selection:text-white">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FLUENT FUTURE - LMS Platform</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .badge-glow {
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+        }
+        /* Hide scrollbars for slick look */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between overflow-x-hidden">
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 lg:px-8 py-3.5 flex items-center justify-between">
+        <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('landing')">
+            <span class="text-3xl">🚀</span>
+            <div>
+                <span class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                    lms.fluent_future
+                </span>
+                <span class="hidden sm:inline-block text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded-full ml-2 font-mono">ONLINE ACADEMY</span>
+            </div>
+        </div>
+
+        <!-- Right Side Controls (Language & User Profile / Login) -->
+        <div class="flex items-center space-x-4">
+            <!-- Language Selector -->
+            <div class="relative">
+                <select id="langSelect" onchange="changeLang(this.value)" class="bg-slate-800 border border-slate-700 text-slate-200 text-xs sm:text-sm rounded-lg px-2.5 py-1.5 focus:outline-none focus:border-blue-500 cursor-pointer">
+                    <option value="uz">🇺🇿 UZ</option>
+                    <option value="en">🇬🇧 EN</option>
+                    <option value="ru">🇷🇺 RU</option>
+                </select>
+            </div>
+
+            <!-- Profile Info (Logged in) or Auth Buttons -->
+            <div id="navAuthSection">
+                <button onclick="openAuthModal()" class="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl shadow-lg transition">
+                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i> <span data-i18n="nav_login">Kirish / Ro'yxatdan o'tish</span>
+                </button>
+            </div>
+            <div id="navProfileSection" class="hidden flex items-center space-x-3">
+                <div class="hidden md:flex items-center space-x-2 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full">
+                    <span class="text-amber-400 text-sm">🏆</span>
+                    <span id="userPointsBadge" class="text-amber-400 font-bold text-xs sm:text-sm">0 pts</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-800 border border-slate-700 px-3 py-1.5 rounded-xl cursor-pointer" onclick="switchView('dashboard')">
+                    <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center font-bold text-xs text-white" id="userAvatar">
+                        U
+                    </div>
+                    <span id="userNameDisplay" class="text-xs sm:text-sm font-medium text-slate-200 max-w-[100px] truncate">O'quvchi</span>
+                </div>
+                <button onclick="logout()" class="text-slate-400 hover:text-red-400 p-2 text-sm transition" title="Chiqish">
+                    <i class="fa-solid fa-power-off"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN VIEW CONTAINER -->
+    <main class="flex-grow">
+        
+        <!-- VIEW 1: LANDING PAGE -->
+        <section id="landingView" class="py-12 sm:py-20 px-4 max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto space-y-6">
+                <div class="inline-flex items-center space-x-2 bg-slate-800 border border-slate-700 px-4 py-1.5 rounded-full text-xs font-semibold text-blue-400 animate-pulse">
+                    <span>⭐</span>
+                    <span data-i18n="hero_tag">Zamonaviy LMS ta'lim platformasi</span>
+                </div>
+                <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
+                    <span data-i18n="hero_title1">Kelajak ta'limiga</span> <br>
+                    <span class="bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                        lms.fluent_future
+                    </span> <span data-i18n="hero_title2">bilan qadam qo'ying!</span>
+                </h1>
+                <p data-i18n="hero_desc" class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto leading-relaxed">
+                    Darslarni o'zlashtiring, topshiriqlarni bajaring, ballar toplayling va eng kuchli o'quvchilar reytingida peshqadam bo'ling!
+                </p>
+
+                <div class="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
+                    <button onclick="openAuthModal()" class="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold px-8 py-4 rounded-xl shadow-xl transition transform hover:-translate-y-0.5 text-base flex items-center justify-center space-x-2">
+                        <span data-i18n="btn_start">Ro'yxatdan o'tish (SMS orqali)</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="grid md:grid-cols-3 gap-6 mt-16">
+                <div class="p-6 rounded-2xl glass-card border border-slate-800 hover:border-blue-500/50 transition duration-300">
+                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-xl flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+                    <h3 data-i18n="feat1_title" class="text-lg font-bold text-white mb-2">Reyting va Ball Tizimi</h3>
+                    <p data-i18n="feat1_desc" class="text-slate-400 text-sm">
+                        Har bir bajarilgan dars va testlar uchun ballar (points) to'plang. Boshqa o'quvchilar bilan raqobatlashib peshqadamlikka erishing.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl glass-card border border-slate-800 hover:border-blue-500/50 transition duration-300">
+                    <div class="w-12 h-12 bg-green-500/10 text-green-400 rounded-xl flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </div>
+                    <h3 data-i18n="feat2_title" class="text-lg font-bold text-white mb-2">SMS Verification</h3>
+                    <p data-i18n="feat2_desc" class="text-slate-400 text-sm">
+                        Haqiqiy telefon raqamingiz orqali bir necha soniyada xavfsiz SMS tasdiqlash kodi bilan ro'yxatdan o'ting.
+                    </p>
+                </div>
+
+                <div class="p-6 rounded-2xl glass-card border border-slate-800 hover:border-blue-500/50 transition duration-300">
+                    <div class="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-xl flex items-center justify-center text-2xl mb-4">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h3 data-i18n="feat3_title" class="text-lg font-bold text-white mb-2">Interaktiv LMS Tizimi</h3>
+                    <p data-i18n="feat3_desc" class="text-slate-400 text-sm">
+                        Grammatika, Lug'at va IELTS bo'yicha maxsus modullar, vazifalar hamda Shaxsiy Rivojlanish yo'nalishlari.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: LMS STUDENT DASHBOARD -->
+        <section id="dashboardView" class="hidden max-w-7xl mx-auto px-4 lg:px-8 py-8 space-y-8">
+            
+            <!-- Dashboard Banner Header -->
+            <div class="glass-card p-6 sm:p-8 rounded-3xl border border-slate-800 bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div class="space-y-2">
+                    <div class="flex items-center space-x-3">
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-white">
+                            <span data-i18n="dash_welcome">Xush kelibsiz,</span> <span id="dashStudentName" class="text-blue-400">O'quvchi</span>! 👋
+                        </h2>
+                    </div>
+                    <p data-i18n="dash_subtitle" class="text-slate-400 text-sm">
+                        Bugungi darslarni yakunlang va reytingdagi o'rningizni oshiring.
+                    </p>
+                </div>
+
+                <!-- Score / Stats Summary -->
+                <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
+                    <div class="bg-slate-800/80 border border-slate-700/80 px-5 py-3 rounded-2xl text-center flex-1 md:flex-none">
+                        <p data-i18n="stat_points" class="text-xs text-slate-400 font-medium">To'plangan Ballar</p>
+                        <p id="dashPoints" class="text-2xl font-black text-amber-400">0 pts</p>
+                    </div>
+                    <div class="bg-slate-800/80 border border-slate-700/80 px-5 py-3 rounded-2xl text-center flex-1 md:flex-none">
+                        <p data-i18n="stat_rank" class="text-xs text-slate-400 font-medium">Reyting O'rni</p>
+                        <p id="dashRank" class="text-2xl font-black text-blue-400">#--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LMS Navigation Tabs -->
+            <div class="flex border-b border-slate-800 space-x-6 text-sm font-semibold overflow-x-auto no-scrollbar">
+                <button onclick="switchTab('lessons')" id="tabBtnLessons" class="tab-btn pb-3 border-b-2 border-blue-500 text-blue-400 whitespace-nowrap">
+                    <i class="fa-solid fa-book-open mr-2"></i><span data-i18n="tab_courses">Darslar va Modullar</span>
+                </button>
+                <button onclick="switchTab('leaderboard')" id="tabBtnLeaderboard" class="tab-btn pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap">
+                    <i class="fa-solid fa-ranking-star mr-2"></i><span data-i18n="tab_leaderboard">Reyting va Peshmadamlar</span>
+                </button>
+            </div>
+
+            <!-- TAB CONTENT 1: LESSONS -->
+            <div id="tabLessons" class="space-y-6">
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Course Card 1 -->
+                    <div class="bg-slate-800/70 border border-slate-700/60 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-500/50 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-3xl">📚</span>
+                                <span class="bg-blue-500/20 text-blue-400 text-xs font-bold px-2.5 py-1 rounded-full">+50 pts</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">English Grammar: Present Perfect</h3>
+                            <p data-i18n="lesson1_desc" class="text-slate-400 text-xs mb-4">
+                                O'tgan va hozirgi zamon bog'liqligi. Test va topshiriqlarni bajarib ball to'plang.
+                            </p>
+                        </div>
+                        <button onclick="completeTask(50, 'Grammar Present Perfect')" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs rounded-xl transition shadow-lg">
+                            <i class="fa-solid fa-circle-check mr-1.5"></i> <span data-i18n="btn_complete_lesson">Darsni Bajarish (+50 pts)</span>
+                        </button>
+                    </div>
+
+                    <!-- Course Card 2 -->
+                    <div class="bg-slate-800/70 border border-slate-700/60 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-500/50 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-3xl">📖</span>
+                                <span class="bg-amber-500/20 text-amber-400 text-xs font-bold px-2.5 py-1 rounded-full">+30 pts</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">Daily Vocabulary: 20 Essential Phrases</h3>
+                            <p data-i18n="lesson2_desc" class="text-slate-400 text-xs mb-4">
+                                Kundalik muloqotda eng ko'p ishlatiladigan iboralar ro'yxati va mashqlar.
+                            </p>
+                        </div>
+                        <button onclick="completeTask(30, 'Vocabulary Practice')" class="w-full py-2.5 bg-amber-600 hover:bg-amber-500 text-white font-semibold text-xs rounded-xl transition shadow-lg">
+                            <i class="fa-solid fa-circle-check mr-1.5"></i> <span data-i18n="btn_complete_lesson">Darsni Bajarish (+30 pts)</span>
+                        </button>
+                    </div>
+
+                    <!-- Course Card 3 -->
+                    <div class="bg-slate-800/70 border border-slate-700/60 rounded-2xl p-6 flex flex-col justify-between hover:border-blue-500/50 transition">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="text-3xl">🎯</span>
+                                <span class="bg-purple-500/20 text-purple-400 text-xs font-bold px-2.5 py-1 rounded-full">+100 pts</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-white mb-1">IELTS Speaking: Mock Test 1</h3>
+                            <p data-i18n="lesson3_desc" class="text-slate-400 text-xs mb-4">
+                                IELTS Speaking Part 1 & 2 savollari bo'yicha simulyatsiya topshirig'i.
+                            </p>
+                        </div>
+                        <button onclick="completeTask(100, 'IELTS Speaking Simulation')" class="w-full py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-xl transition shadow-lg">
+                            <i class="fa-solid fa-circle-check mr-1.5"></i> <span data-i18n="btn_complete_lesson">Darsni Bajarish (+100 pts)</span>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB CONTENT 2: LEADERBOARD -->
+            <div id="tabLeaderboard" class="hidden space-y-6">
+                <div class="glass-card p-6 rounded-2xl border border-slate-800">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h3 data-i18n="lb_title" class="text-xl font-bold text-white">Peshqadam O'quvchilar Reytingi</h3>
+                            <p data-i18n="lb_subtitle" class="text-xs text-slate-400">Eng ko'p ball to'plagan eng faol o'quvchilar ro'yxati</p>
+                        </div>
+                        <span class="text-2xl">🏆</span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm text-slate-300">
+                            <thead class="bg-slate-800/80 text-xs text-slate-400 uppercase">
+                                <tr>
+                                    <th class="py-3 px-4 rounded-l-lg">O'rin</th>
+                                    <th class="py-3 px-4">O'quvchi Ismi</th>
+                                    <th class="py-3 px-4">Telefon</th>
+                                    <th class="py-3 px-4 text-right rounded-r-lg">Ballar (Points)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboardBody" class="divide-y divide-slate-800">
+                                <!-- Dynamic leaderboard rows inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- STREAMING_CHUNK:Rendering Auth Modal Flow (Phone -> SMS Verification -> Password Setup)... -->
+    <!-- SMS AUTHENTICATION MODAL -->
+    <div id="authModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl">
+            
+            <button onclick="closeAuthModal()" class="absolute top-5 right-5 text-slate-400 hover:text-white text-lg p-1">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <!-- STEP 1: PHONE NUMBER INPUT -->
+            <div id="authStep1" class="space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-2xl flex items-center justify-center text-2xl mx-auto">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <h3 data-i18n="auth_s1_title" class="text-2xl font-bold text-white">Tizimga Kirish</h3>
+                    <p data-i18n="auth_s1_desc" class="text-slate-400 text-xs">Telefon raqamingizni kiriting va SMS tasdiqlash kodini oling</p>
+                </div>
+
+                <form onsubmit="handlePhoneSubmit(event)" class="space-y-4">
+                    <div>
+                        <label data-i18n="label_full_name" class="block text-xs font-semibold text-slate-400 uppercase mb-1">Ism va Familiyangiz</label>
+                        <input type="text" id="inputName" required placeholder="Ali Valiyev" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <div>
+                        <label data-i18n="label_phone" class="block text-xs font-semibold text-slate-400 uppercase mb-1">Telefon Raqamingiz</label>
+                        <input type="tel" id="inputPhone" required placeholder="+998 90 123 45 67" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition text-sm flex items-center justify-center space-x-2">
+                        <span data-i18n="btn_next">Keyingisi (SMS Kod Olish)</span>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- STEP 2: SMS CODE VERIFICATION -->
+            <div id="authStep2" class="hidden space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-2xl flex items-center justify-center text-2xl mx-auto">
+                        <i class="fa-solid fa-comment-sms"></i>
+                    </div>
+                    <h3 data-i18n="auth_s2_title" class="text-2xl font-bold text-white">SMS Kodni Kiriting</h3>
+                    <p class="text-slate-400 text-xs">
+                        <span data-i18n="auth_s2_desc">FLUENT FUTURE maktabi nomidan</span> <b id="displaySentPhone" class="text-slate-200">+998...</b> <span data-i18n="auth_s2_desc2">raqamiga yuborilgan 4 xonali kodni kiriting.</span>
+                    </p>
+                    
+                    <!-- Simulated SMS Notice -->
+                    <div class="p-3 bg-blue-500/10 border border-blue-500/30 rounded-xl text-left text-xs text-blue-300 flex items-center space-x-3">
+                        <i class="fa-solid fa-circle-info text-base text-blue-400"></i>
+                        <div>
+                            <p class="font-bold">FLUENT FUTURE SMS:</p>
+                            <p>Sizning tasdiqlash kodingiz: <span id="simulatedSmsCode" class="font-bold text-amber-400 text-sm">7788</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <form onsubmit="handleSmsVerify(event)" class="space-y-4">
+                    <div>
+                        <label data-i18n="label_sms_code" class="block text-xs font-semibold text-slate-400 uppercase mb-1">SMS Kod</label>
+                        <input type="text" id="inputSmsCode" maxlength="4" required placeholder="7788" class="w-full text-center text-2xl tracking-widest font-mono py-3 rounded-xl bg-slate-800 border border-slate-700 text-amber-400 focus:outline-none focus:border-blue-500">
+                    </div>
+
+                    <p id="smsError" class="hidden text-xs text-red-400 text-center font-medium">Kiritilgan SMS kod noto'g'ri!</p>
+
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl shadow-lg transition text-sm">
+                        <span data-i18n="btn_verify">Tasdiqlash</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- STEP 3: CREATE PERMANENT PASSWORD (PIN) -->
+            <div id="authStep3" class="hidden space-y-6">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 bg-green-500/10 text-green-400 rounded-2xl flex items-center justify-center text-2xl mx-auto">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h3 data-i18n="auth_s3_title" class="text-2xl font-bold text-white">Parol Yaratish</h3>
+                    <p data-i18n="auth_s3_desc" class="text-slate-400 text-xs">Doimiy kirish uchun xavfsiz parol o'ylab toping</p>
+                </div>
+
+                <form onsubmit="handlePasswordSet(event)" class="space-y-4">
+                    <div>
+                        <label data-i18n="label_create_pass" class="block text-xs font-semibold text-slate-400 uppercase mb-1">Doimiy Parol</label>
+                        <input type="password" id="inputPassword" required minlength="4" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 text-sm">
+                    </div>
+
+                    <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 text-white font-bold rounded-xl shadow-lg transition text-sm flex items-center justify-center space-x-2">
+                        <span data-i18n="btn_finish">Ro'yxatdan o'tishni yakunlash</span>
+                        <i class="fa-solid fa-check"></i>
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- NOTIFICATION TOAST -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 hidden bg-slate-800 border border-slate-700 text-white px-5 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 transition transform">
+        <span id="toastIcon" class="text-xl">🎉</span>
+        <span id="toastMsg" class="text-sm font-medium">Bajarildi!</span>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>&copy; 2026 lms.fluent_future Academy. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // TRANSLATIONS DICTIONARY (UZ, EN, RU)
+        const translations = {
+            uz: {
+                nav_login: "Kirish / Ro'yxatdan o'tish",
+                hero_tag: "Zamonaviy LMS ta'lim platformasi",
+                hero_title1: "Kelajak ta'limiga",
+                hero_title2: "bilan qadam qo'ying!",
+                hero_desc: "Darslarni o'zlashtiring, topshiriqlarni bajaring, ballar toplayling va eng kuchli o'quvchilar reytingida peshqadam bo'ling!",
+                btn_start: "Ro'yxatdan o'tish (SMS orqali)",
+                feat1_title: "Reyting va Ball Tizimi",
+                feat1_desc: "Har bir bajarilgan dars va testlar uchun ballar (points) to'plang. Boshqa o'quvchilar bilan raqobatlashib peshqadamlikka erishing.",
+                feat2_title: "SMS Verification",
+                feat2_desc: "Haqiqiy telefon raqamingiz orqali bir necha soniyada xavfsiz SMS tasdiqlash kodi bilan ro'yxatdan o'ting.",
+                feat3_title: "Interaktiv LMS Tizimi",
+                feat3_desc: "Grammatika, Lug'at va IELTS bo'yicha maxsus modullar, vazifalar hamda Shaxsiy Rivojlanish yo'nalishlari.",
+                dash_welcome: "Xush kelibsiz,",
+                dash_subtitle: "Bugungi darslarni yakunlang va reytingdagi o'rningizni oshiring.",
+                stat_points: "To'plangan Ballar",
+                stat_rank: "Reyting O'rni",
+                tab_courses: "Darslar va Modullar",
+                tab_leaderboard: "Reyting va Peshmadamlar",
+                btn_complete_lesson: "Darsni Bajarish",
+                lb_title: "Peshqadam O'quvchilar Reytingi",
+                lb_subtitle: "Eng ko'p ball to'plagan eng faol o'quvchilar ro'yxati",
+                auth_s1_title: "Tizimga Kirish",
+                auth_s1_desc: "Telefon raqamingizni kiriting va SMS tasdiqlash kodini oling",
+                label_full_name: "Ism va Familiyangiz",
+                label_phone: "Telefon Raqamingiz",
+                btn_next: "Keyingisi (SMS Kod Olish)",
+                auth_s2_title: "SMS Kodni Kiriting",
+                auth_s2_desc: "FLUENT FUTURE maktabi nomidan",
+                auth_s2_desc2: "raqamiga yuborilgan 4 xonali kodni kiriting.",
+                label_sms_code: "SMS Kod",
+                btn_verify: "Tasdiqlash",
+                auth_s3_title: "Parol Yaratish",
+                auth_s3_desc: "Doimiy kirish uchun xavfsiz parol o'ylab toping",
+                label_create_pass: "Doimiy Parol",
+                btn_finish: "Ro'yxatdan o'tishni yakunlash",
+                lesson1_desc: "O'tgan va hozirgi zamon bog'liqligi. Test va topshiriqlarni bajarib ball to'plang.",
+                lesson2_desc: "Kundalik muloqotda eng ko'p ishlatiladigan iboralar ro'yxati va mashqlar.",
+                lesson3_desc: "IELTS Speaking Part 1 & 2 savollari bo'yicha simulyatsiya topshirig'i."
+            },
+            en: {
+                nav_login: "Login / Register",
+                hero_tag: "Modern LMS Education Platform",
+                hero_title1: "Step into future learning with",
+                hero_title2: "",
+                hero_desc: "Master lessons, complete tasks, earn points, and top the student leaderboard!",
+                btn_start: "Register via SMS",
+                feat1_title: "Point & Leaderboard System",
+                feat1_desc: "Earn points for completing lessons and quizzes. Compete with peers for top ranking.",
+                feat2_title: "SMS Verification",
+                feat2_desc: "Register in seconds with real SMS code verification sent directly to your phone.",
+                feat3_title: "Interactive LMS Portal",
+                feat3_desc: "Grammar, Vocabulary, IELTS modules, and personal growth tools.",
+                dash_welcome: "Welcome,",
+                dash_subtitle: "Complete today's tasks and improve your leaderboard ranking.",
+                stat_points: "Total Points",
+                stat_rank: "Leaderboard Rank",
+                tab_courses: "Lessons & Modules",
+                tab_leaderboard: "Leaderboard & Rankings",
+                btn_complete_lesson: "Complete Lesson",
+                lb_title: "Top Students Leaderboard",
+                lb_subtitle: "List of top performing students ranked by total points",
+                auth_s1_title: "Sign In / Register",
+                auth_s1_desc: "Enter your phone number to receive an SMS code",
+                label_full_name: "Full Name",
+                label_phone: "Phone Number",
+                btn_next: "Next (Get SMS Code)",
+                auth_s2_title: "Enter SMS Code",
+                auth_s2_desc: "From FLUENT FUTURE school to",
+                auth_s2_desc2: "enter the 4-digit code sent.",
+                label_sms_code: "SMS Code",
+                btn_verify: "Verify Code",
+                auth_s3_title: "Create Password",
+                auth_s3_desc: "Set up a permanent password for future logins",
+                label_create_pass: "Permanent Password",
+                btn_finish: "Complete Registration",
+                lesson1_desc: "Connecting past and present. Earn points by completing exercises.",
+                lesson2_desc: "Essential phrases and practice exercises for daily communication.",
+                lesson3_desc: "Simulated IELTS Speaking Part 1 & 2 exam practice."
+            },
+            ru: {
+                nav_login: "Войти / Регистрация",
+                hero_tag: "Современная LMS платформа",
+                hero_title1: "Шагните в будущее обучения с",
+                hero_title2: "",
+                hero_desc: "Изучайте уроки, выполняйте задания, зарабатывайте баллы и возглавьте рейтинг!",
+                btn_start: "Регистрация по SMS",
+                feat1_title: "Система Баллов и Рейтинга",
+                feat1_desc: "Получайте баллы за пройденные уроки и тесты. Соревнуйтесь за первые места.",
+                feat2_title: "SMS Верификация",
+                feat2_desc: "Безопасная регистрация за несколько секунд с помощью SMS кода.",
+                feat3_title: "Интерактивная LMS",
+                feat3_desc: "Модули по грамматике, словарному запасу, IELTS и личностному росту.",
+                dash_welcome: "Добро пожаловать,",
+                dash_subtitle: "Завершайте сегодняшние уроки и повышайте свой рейтинг.",
+                stat_points: "Всего Баллов",
+                stat_rank: "Место в Рейтинге",
+                tab_courses: "Уроки и Модули",
+                tab_leaderboard: "Рейтинг Студентов",
+                btn_complete_lesson: "Пройти Урок",
+                lb_title: "Рейтинг Лучших Студентов",
+                lb_subtitle: "Список самых активных студентов по количеству баллов",
+                auth_s1_title: "Вход / Регистрация",
+                auth_s1_desc: "Введите номер телефона для получения SMS кода",
+                label_full_name: "Ваше Имя и Фамилия",
+                label_phone: "Номер Телефона",
+                btn_next: "Далее (Получить SMS)",
+                auth_s2_title: "Введите SMS Код",
+                auth_s2_desc: "От школы FLUENT FUTURE на номер",
+                auth_s2_desc2: "введите 4-значный код.",
+                label_sms_code: "SMS Код",
+                btn_verify: "Подтвердить",
+                auth_s3_title: "Создайте Пароль",
+                auth_s3_desc: "Придумайте пароль для последующих входов",
+                label_create_pass: "Постоянный Пароль",
+                btn_finish: "Завершить Регистрацию",
+                lesson1_desc: "Связь прошлого и настоящего. Выполняйте задания и получайте баллы.",
+                lesson2_desc: "Список самых популярных фраз для общения и упражнения.",
+                lesson3_desc: "Симуляция экзамена IELTS Speaking Part 1 & 2."
+            }
+        };
+
+        // GLOBAL APP STATE
+        let currentLang = 'uz';
+        let currentUser = null;
+        let generatedSmsCode = "7788";
+        let tempPhone = "";
+        let tempName = "";
+
+        // MOCK LEADERBOARD DATA
+        let studentsList = [
+            { name: "Sardor Azimov", phone: "+998 90 *** *1 22", points: 340 },
+            { name: "Madina Aliyeva", phone: "+998 93 *** *4 55", points: 280 },
+            { name: "Jasur Rahimov", phone: "+998 97 *** *8 99", points: 210 },
+            { name: "Malika Sobirova", phone: "+998 91 *** *3 11", points: 150 }
+        ];
+
+        // LANGUAGE CHANGE FUNCTION
+        function changeLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang] && translations[lang][key] !== undefined) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+            document.getElementById('langSelect').value = lang;
+        }
+
+        // VIEW SWITCHING (Landing vs Dashboard)
+        function switchView(viewName) {
+            if (viewName === 'dashboard' && currentUser) {
+                document.getElementById('landingView').classList.add('hidden');
+                document.getElementById('dashboardView').classList.remove('hidden');
+                updateDashboardUI();
+            } else {
+                document.getElementById('landingView').classList.remove('hidden');
+                document.getElementById('dashboardView').classList.add('hidden');
+            }
+        }
+
+        // TAB SWITCHING (Lessons vs Leaderboard)
+        function switchTab(tabName) {
+            const btnLessons = document.getElementById('tabBtnLessons');
+            const btnLeaderboard = document.getElementById('tabBtnLeaderboard');
+            const tabLessons = document.getElementById('tabLessons');
+            const tabLeaderboard = document.getElementById('tabLeaderboard');
+
+            if (tabName === 'lessons') {
+                btnLessons.className = "tab-btn pb-3 border-b-2 border-blue-500 text-blue-400 whitespace-nowrap";
+                btnLeaderboard.className = "tab-btn pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap";
+                tabLessons.classList.remove('hidden');
+                tabLeaderboard.classList.add('hidden');
+            } else {
+                btnLeaderboard.className = "tab-btn pb-3 border-b-2 border-blue-500 text-blue-400 whitespace-nowrap";
+                btnLessons.className = "tab-btn pb-3 border-b-2 border-transparent text-slate-400 hover:text-slate-200 whitespace-nowrap";
+                tabLeaderboard.classList.remove('hidden');
+                tabLessons.classList.add('hidden');
+                renderLeaderboard();
+            }
+        }
+
+        // AUTH MODAL HANDLERS
+        function openAuthModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+            showAuthStep(1);
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function showAuthStep(step) {
+            document.getElementById('authStep1').classList.add('hidden');
+            document.getElementById('authStep2').classList.add('hidden');
+            document.getElementById('authStep3').classList.add('hidden');
+
+            document.getElementById(`authStep${step}`).classList.remove('hidden');
+        }
+
+        // STEP 1: PHONE SUBMIT
+        function handlePhoneSubmit(e) {
+            e.preventDefault();
+            tempName = document.getElementById('inputName').value;
+            tempPhone = document.getElementById('inputPhone').value;
+
+            // Generate random 4-digit code
+            generatedSmsCode = Math.floor(1000 + Math.random() * 9000).toString();
+            document.getElementById('simulatedSmsCode').textContent = generatedSmsCode;
+            document.getElementById('displaySentPhone').textContent = tempPhone;
+
+            showAuthStep(2);
+        }
+
+        // STEP 2: SMS VERIFY
+        function handleSmsVerify(e) {
+            e.preventDefault();
+            const inputCode = document.getElementById('inputSmsCode').value;
+
+            if (inputCode === generatedSmsCode) {
+                document.getElementById('smsError').classList.add('hidden');
+                showAuthStep(3);
+            } else {
+                document.getElementById('smsError').classList.remove('hidden');
+            }
+        }
+
+        // STEP 3: PASSWORD SET & COMPLETE REGISTRATION
+        function handlePasswordSet(e) {
+            e.preventDefault();
+            const password = document.getElementById('inputPassword').value;
+
+            currentUser = {
+                name: tempName,
+                phone: tempPhone,
+                points: 0,
+                password: password
+            };
+
+            // Add user to student list
+            studentsList.push({
+                name: currentUser.name,
+                phone: currentUser.phone,
+                points: currentUser.points
+            });
+
+            closeAuthModal();
+            showToast("🎉 Ro'yxatdan o'tish muvaffaqiyatli yakunlandi!");
+            
+            // Switch UI state to Logged In
+            document.getElementById('navAuthSection').classList.add('hidden');
+            document.getElementById('navProfileSection').classList.remove('hidden');
+            document.getElementById('userNameDisplay').textContent = currentUser.name;
+            document.getElementById('userAvatar').textContent = currentUser.name.charAt(0).toUpperCase();
+
+            switchView('dashboard');
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('navAuthSection').classList.remove('hidden');
+            document.getElementById('navProfileSection').classList.add('hidden');
+            switchView('landing');
+            showToast("Tizimdan chiqdingiz");
+        }
+
+        // COMPLETE TASK & EARN POINTS
+        function completeTask(points, taskTitle) {
+            if (!currentUser) return;
+
+            currentUser.points += points;
+
+            // Update in leaderboard list
+            const student = studentsList.find(s => s.phone === currentUser.phone);
+            if (student) {
+                student.points = currentUser.points;
+            }
+
+            updateDashboardUI();
+            showToast(`+${points} pts to'pladingiz! (${taskTitle})`);
+        }
+
+        // UPDATE DASHBOARD VALUES
+        function updateDashboardUI() {
+            if (!currentUser) return;
+
+            document.getElementById('dashStudentName').textContent = currentUser.name;
+            document.getElementById('dashPoints').textContent = `${currentUser.points} pts`;
+            document.getElementById('userPointsBadge').textContent = `${currentUser.points} pts`;
+
+            // Calculate Rank
+            studentsList.sort((a, b) => b.points - a.points);
+            const rank = studentsList.findIndex(s => s.phone === currentUser.phone) + 1;
+            document.getElementById('dashRank').textContent = `#${rank}`;
+
+            renderLeaderboard();
+        }
+
+        // RENDER LEADERBOARD TABLE
+        function renderLeaderboard() {
+            studentsList.sort((a, b) => b.points - a.points);
+            const tbody = document.getElementById('leaderboardBody');
+            tbody.innerHTML = '';
+
+            studentsList.forEach((s, idx) => {
+                const isMe = currentUser && s.phone === currentUser.phone;
+                const tr = document.createElement('tr');
+                tr.className = isMe ? "bg-blue-600/20 font-bold border-l-4 border-blue-500" : "hover:bg-slate-800/40";
+
+                let medal = `#${idx + 1}`;
+                if (idx === 0) medal = "🥇 1";
+                if (idx === 1) medal = "🥈 2";
+                if (idx === 2) medal = "🥉 3";
+
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-bold text-amber-400">${medal}</td>
+                    <td class="py-3 px-4 flex items-center space-x-2">
+                        <span>${s.name}</span>
+                        ${isMe ? '<span class="text-[10px] bg-blue-500 text-white px-2 py-0.5 rounded-full">Siz</span>' : ''}
+                    </td>
+                    <td class="py-3 px-4 text-xs font-mono text-slate-400">${s.phone}</td>
+                    <td class="py-3 px-4 text-right font-black text-amber-400">${s.points} pts</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // TOAST NOTIFICATION
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
